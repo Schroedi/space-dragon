@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
-
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
@@ -21,10 +20,8 @@ public class Dragon {
 
 	public float[] vertsBody = new float[15];
 	public float[] vertsWingUp = new float[15];
-	public float[] vertsWingDown = new float[15];
 	public Mesh meshBody;
-	public Mesh meshWingUp;
-	public Mesh meshWingDown;
+	public Mesh meshWing;
 
 	// loading of assets etc
 	public void create() {
@@ -68,26 +65,6 @@ public class Dragon {
 		vertsWingUp[i++] = 1f; // u3
 		vertsWingUp[i++] = 1f; // v3
 
-		i = 0;
-
-		vertsWingDown[i++] = -1; // x1
-		vertsWingDown[i++] = 0; // y1
-		vertsWingDown[i++] = 0;
-		vertsWingDown[i++] = 0f; // u1
-		vertsWingDown[i++] = 0f; // v1
-
-		vertsWingDown[i++] = -2f; // x2
-		vertsWingDown[i++] = -1; // y2
-		vertsWingDown[i++] = 0;
-		vertsWingDown[i++] = 1f; // u2
-		vertsWingDown[i++] = 0f; // v2
-
-		vertsWingDown[i++] = -2f; // x3
-		vertsWingDown[i++] = -1f; // y2
-		vertsWingDown[i++] = 1;
-		vertsWingDown[i++] = 1f; // u3
-		vertsWingDown[i++] = 1f; // v3
-
 		meshBody = new Mesh(true, 3, 0, // static mesh with 4 vertices and no
 				// indices
 				new VertexAttribute(Usage.Position, 3,
@@ -95,16 +72,8 @@ public class Dragon {
 						Usage.TextureCoordinates, 2,
 						ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
 
-		meshWingUp = new Mesh(true, 3, 0, // static mesh with 4 vertices and
-											// no
-				// indices
-				new VertexAttribute(Usage.Position, 3,
-						ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-						Usage.TextureCoordinates, 2,
-						ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
-
-		meshWingDown = new Mesh(true, 3, 0, // static mesh with 4 vertices and
-											// no
+		meshWing = new Mesh(true, 3, 0, // static mesh with 4 vertices and
+										// no
 				// indices
 				new VertexAttribute(Usage.Position, 3,
 						ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
@@ -112,35 +81,36 @@ public class Dragon {
 						ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
 
 		meshBody.setVertices(vertsBody);
-		meshWingUp.setVertices(vertsWingUp);
-		meshWingDown.setVertices(vertsWingDown);
-		
+		meshWing.setVertices(vertsWingUp);
+
 		rightWingDown = 1.0f;
+		leftWingDown = 1.0f;
 	}
 
 	public void render(PerspectiveCamera camera) {
 		Matrix4 mat = camera.combined;
 		mat.translate(position);
+		Matrix4 wing = mat.cpy();
 		Game.shaderMain.begin();
-		Game.shaderMain.setUniformMatrix("u_worldView", mat);
 
+		// render body
+		Game.shaderMain.setUniformMatrix("u_worldView", mat);
 		meshBody.render(Game.shaderMain, GL20.GL_TRIANGLES);
-		if (leftWingDown < 0.5) {
-			meshWingUp.render(Game.shaderMain, GL20.GL_TRIANGLES);
-		} else {
-			meshWingDown.render(Game.shaderMain, GL20.GL_TRIANGLES);
-		}
 
-		mat.scale(-1, 1, 1);
-		Game.shaderMain.setUniformMatrix("u_worldView", mat);
+		// render left wing
+		wing.rotate(0, 0, -1, leftWingDown * -45.0f);
+		Game.shaderMain.setUniformMatrix("u_worldView", wing);
 
-		if (rightWingDown < 0.5) {
-			meshWingUp.render(Game.shaderMain, GL20.GL_TRIANGLES);
-		} else {
-			meshWingDown.render(Game.shaderMain, GL20.GL_TRIANGLES);
-		}
-		mat.scale(-1, 1, 1);
-		Game.shaderMain.setUniformMatrix("u_worldView", mat);
+		meshWing.render(Game.shaderMain, GL20.GL_TRIANGLES);
+
+		// render right wing
+		wing = mat.cpy();
+		wing.scale(-1, 1, 1);
+		wing.rotate(0, 0, -1, rightWingDown * -45.0f);
+
+		Game.shaderMain.setUniformMatrix("u_worldView", wing);
+
+		meshWing.render(Game.shaderMain, GL20.GL_TRIANGLES);
 
 		Game.shaderMain.end();
 	}
