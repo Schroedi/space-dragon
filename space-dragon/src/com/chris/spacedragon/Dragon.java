@@ -23,6 +23,22 @@ public class Dragon {
 	public Mesh meshBody;
 	public Mesh meshWing;
 
+	public long lastUpdate;
+	public Boolean leftKeyDown;
+	public long lastLeftKeyDown;
+	public Boolean rightKeyDown;
+	public long lastRightKeyDown;
+
+	public static float FRaVEC = 5; // forward accel with wing swinging
+	public static float GRAV = 9.81f; // basic Downward accel
+	public static float TopUPaVec = 5; // upward acceleration with wing at the
+										// top
+	public static float DownUPaVec = 2.5f; // upward acceleration with wing at
+											// the bottom
+	public static float SwUPaVec = 15; // upward acceleration with wing swinging
+	public static float WingMovePerMSec = 0.5f / 1000f; // wing movement per
+														// second;
+
 	// loading of assets etc
 	public void create() {
 		int i = 0;
@@ -117,7 +133,28 @@ public class Dragon {
 
 	// updates position of dragon
 	public void update() {
+		// pc input for now
+		long timestep = System.currentTimeMillis() - lastUpdate;
+		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+			if (leftWingDown < 1)
+				leftWingDown += WingMovePerMSec * timestep;
+			leftKeyDown = true;
+		} else {
+			if (leftWingDown > 1)
+				leftWingDown -= WingMovePerMSec * timestep;
+		}
+
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+			rightKeyDown = true;
+			if (rightWingDown < 1)
+				rightWingDown += WingMovePerMSec * timestep;
+		} else {
+			if (rightWingDown > 1)
+				rightWingDown -= WingMovePerMSec * timestep;
+
+		}
+
+		lastUpdate = System.currentTimeMillis();
 
 	}
-
 }
