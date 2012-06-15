@@ -1,26 +1,46 @@
-*.pydevproject
+ignore/*
+
+
+.DS_Store
+*/.DS_Store
+**/**/.DS_Store
+
+
 .metadata
-bin/**
-tmp/**
-tmp/**/*
+*/.metadata
+
+
+*/bin/**
+*/tmp/**
+*/tmp/**/*
 *.tmp
 *.bak
 *.swp
 *~.nib
-local.properties
-.classpath
-.settings/
-.loadpath
 
-# External tool builders
-.externalToolBuilders/
 
-# Locally stored "Eclipse launch configurations"
-*.launch
+RemoteSystemsTempFiles/
 
-# CDT-specific
-.cproject
 
-# PDT-specific
-.buildpath
+# android specific
+# */gen/*   ### we want these!
+*/bin
 
+
+# files for the dex VM
+*.dex
+
+
+# Java class files
+*.class
+
+
+# generated GUI files
+*R.java
+
+
+### eclipse files we DO want
+# local.properties
+# */.loadpath
+# classpath
+# settings
