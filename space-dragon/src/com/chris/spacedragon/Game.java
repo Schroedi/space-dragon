@@ -10,11 +10,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
+import com.chris.spacedragon.Dragon;
+
 public class Game implements ApplicationListener {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
 	private Texture texture;
 	private Sprite sprite;
+	
+	public Dragon dragon;
 	
 	@Override
 	public void create() {		
@@ -33,6 +37,8 @@ public class Game implements ApplicationListener {
 		sprite.setSize(0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
 		sprite.setOrigin(sprite.getWidth()/2, sprite.getHeight()/2);
 		sprite.setPosition(-sprite.getWidth()/2, -sprite.getHeight()/2);
+		
+		dragon.create();
 	}
 
 	@Override
@@ -50,6 +56,9 @@ public class Game implements ApplicationListener {
 		batch.begin();
 		sprite.draw(batch);
 		batch.end();
+		
+		dragon.update();
+		dragon.render();
 	}
 
 	@Override
