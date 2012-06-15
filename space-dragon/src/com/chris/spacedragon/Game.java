@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
+import com.chris.spacedragon.Dragon;
+
 public class Game implements ApplicationListener {
 	private PerspectiveCamera camera;
 	private SpriteBatch batch;
@@ -19,6 +21,9 @@ public class Game implements ApplicationListener {
 	public static ShaderProgram shaderMain;
 	public static Terrain  terrain;
 	
+
+	public Dragon dragon;
+
 	@Override
 	public void create() {
 		
@@ -55,16 +60,19 @@ public class Game implements ApplicationListener {
 		camera.update();
 		//camera = new OrthographicCamera(1, h / w);
 		batch = new SpriteBatch();
-
+		
 		texture = new Texture(Gdx.files.internal("data/libgdx.png"));
 		texture.setFilter(TextureFilter.Linear, TextureFilter.Linear);
-
+		
 		TextureRegion region = new TextureRegion(texture, 0, 0, 512, 275);
-
+		
 		sprite = new Sprite(region);
 		sprite.setSize(0.9f, 0.9f * sprite.getHeight() / sprite.getWidth());
 		sprite.setOrigin(sprite.getWidth() / 2, sprite.getHeight() / 2);
 		sprite.setPosition(-sprite.getWidth() / 2, -sprite.getHeight() / 2);
+
+		dragon = new Dragon();
+		dragon.create();
 	}
 
 	@Override
@@ -80,6 +88,8 @@ public class Game implements ApplicationListener {
 		
 		Terrain.render(camera);
 
+		dragon.update();
+		dragon.render();
 	}
 
 	@Override
