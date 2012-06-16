@@ -1,5 +1,7 @@
 package com.chris.spacedragon;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -36,7 +38,7 @@ public class Dragon {
 	public static float DownUPaVec = 2.5f; // upward acceleration with wing at
 											// the bottom
 	public static float SwUPaVec = 15; // upward acceleration with wing swinging
-	public static float WingMovePerMSec = 0.5f / 1000f; // wing movement per
+	public static float WingMovePerMSec = 3f / 1000f; // wing movement per
 														// second;
 
 	// loading of assets etc
@@ -101,6 +103,8 @@ public class Dragon {
 
 		rightWingDown = 1.0f;
 		leftWingDown = 1.0f;
+		
+		lastUpdate = System.currentTimeMillis();
 	}
 
 	public void render(PerspectiveCamera camera) {
@@ -140,7 +144,7 @@ public class Dragon {
 				leftWingDown += WingMovePerMSec * timestep;
 			leftKeyDown = true;
 		} else {
-			if (leftWingDown > 1)
+			if (leftWingDown > 0)
 				leftWingDown -= WingMovePerMSec * timestep;
 		}
 
@@ -149,7 +153,7 @@ public class Dragon {
 			if (rightWingDown < 1)
 				rightWingDown += WingMovePerMSec * timestep;
 		} else {
-			if (rightWingDown > 1)
+			if (rightWingDown > 0)
 				rightWingDown -= WingMovePerMSec * timestep;
 
 		}
