@@ -1,9 +1,0 @@
-d:
-d:data
-d:data/models
-t:data/models/spacedragon.obj
-t:data/models/wing.obj
-t:data/models/body.obj
-i:data/libgdx.png
-d:data/textures
-i:data/textures/circle.png
