@@ -26,7 +26,7 @@ public class Game implements ApplicationListener {
 
 	@Override
 	public void create() {
-		
+
 		String vertexShader = "attribute vec4 a_position;    \n"
 				+ "attribute vec4 a_color;\n" + "attribute vec2 a_texCoord0;\n"
 				+ "uniform mat4 u_worldView;\n" + "varying vec4 v_color;"
@@ -71,11 +71,12 @@ public class Game implements ApplicationListener {
 
 		dragon = new Dragon();
 		dragon.create();
-		
+		dragon.position.y = 10;
+
 		Circle.initializeAll();
-		Circle.addToList(new Vector3(3.0f,1.0f,-12.0f));
-		Circle.addToList(new Vector3(0.0f,0.0f,-10.0f));
-		Circle.addToList(new Vector3(0.0f,0.0f,-5.0f));
+		Circle.addToList(new Vector3(0.0f, 10.0f, -12.0f));
+		Circle.addToList(new Vector3(0.0f, 10.0f, -10.0f));
+		Circle.addToList(new Vector3(0.0f, 10.0f, -8.0f));
 	}
 
 	@Override
@@ -85,26 +86,35 @@ public class Game implements ApplicationListener {
 	}
 
 	@Override
-	public void render() {		
+	public void render() {
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-		
+
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
-		
+
 		Vector3 campos = dragon.position.cpy();
 		campos.z += 10;
 		campos.y += 5;
-		
+
 		camera.position.set(campos);
 		camera.lookAt(dragon.position.x, dragon.position.y, dragon.position.z);
 		camera.update();
 		
+		Circle.updateAll(dragon);
+
 		Terrain.render(camera);
 
 		dragon.update();
 		dragon.render(camera);
-		
+
 		Circle.renderAll(camera);
+		if(Circle.circles.isEmpty()) {
+			System.exit(0);
+		}
+
+		if (dragon.position.y < 0) {
+			System.exit(0);
+		}
 	}
 
 	@Override

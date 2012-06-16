@@ -1,6 +1,8 @@
 package com.chris.spacedragon;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -109,6 +111,19 @@ public class Circle {
 		}
 	}
 
+	static void updateAll(Dragon dragon) {
+		Collection<Circle> toRemove = new LinkedList<Circle>();
+		for (Circle c : circles) {
+			c.update();
+			if(c.testCollision(dragon.position))
+			{
+			  toRemove.add(c);
+			}
+		}
+		
+		circles.removeAll(toRemove);
+	}
+
 	public void render(PerspectiveCamera camera) {
 		t += 1;
 		Matrix4 mat = camera.combined.cpy();
@@ -132,6 +147,13 @@ public class Circle {
 
 	public void update() {
 
+	}
+
+	public boolean testCollision(Vector3 pos) {
+		if (pos.tmp().sub(position).len2() < size * size) {
+			return true;
+		}
+		return false;
 	}
 
 }
