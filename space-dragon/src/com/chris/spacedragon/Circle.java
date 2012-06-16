@@ -28,7 +28,7 @@ public class Circle {
 	public Vector3 position;
 
 	public float size = 1.0f;
-	
+
 	public float t = 0;
 
 	public static List<Circle> circles = new ArrayList<Circle>();
@@ -76,19 +76,22 @@ public class Circle {
 				+ "   v_texCoords = a_texCoord0; \n"
 				+ "   gl_Position =  u_worldView * a_position;  \n"
 				+ "}                            \n";
-		String fragmentShader = "#ifdef GL_ES\n" + "precision mediump float;\n"
-				+ "#endif\n" + "varying vec4 v_color;\n"
+		String fragmentShader = "#ifdef GL_ES\n"
+				+ "precision mediump float;\n"
+				+ "#endif\n"
+				+ "varying vec4 v_color;\n"
 				+ "varying vec2 v_texCoords;\n"
 				+ "uniform sampler2D u_texture;\n"
 				+ "void main()                                  \n"
 				+ "{                                            \n"
-				+ "gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n" + "}";
+				+ "gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n"
+				+ "}";
 		shaderCircleTexture = new ShaderProgram(vertexShader, fragmentShader);
-		
+
 		textureCircle = new Texture(Gdx.files.internal("textures/circle.png"));
 	}
 
-	public Circle(float r ) {
+	public Circle(float r) {
 		size = r;
 		t = (float) (Math.random() * 360.0f);
 	}
@@ -97,28 +100,26 @@ public class Circle {
 		Circle c = new Circle(1);
 		c.position = pos;
 		circles.add(c);
-		
+
 	}
-	
+
 	static void renderAll(PerspectiveCamera camera) {
-		for(Circle c: circles) {
+		for (Circle c : circles) {
 			c.render(camera);
 		}
 	}
 
 	public void render(PerspectiveCamera camera) {
-		t+= 1;
+		t += 1;
 		Matrix4 mat = camera.combined.cpy();
 		mat.translate(position);
 		mat.scale(size, size, size);
 		mat.rotate(0, 0, 1, t);
-		
+
 		Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
-		
+
 		Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glEnable(GL10.GL_BLEND);
-		
-
 
 		shaderCircleTexture.begin();
 		textureCircle.bind();
