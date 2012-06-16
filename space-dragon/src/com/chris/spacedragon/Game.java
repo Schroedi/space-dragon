@@ -25,8 +25,7 @@ public class Game implements ApplicationListener {
 
 	@Override
 	public void create() {
-
-		terrain = new Terrain();
+		
 		String vertexShader = "attribute vec4 a_position;    \n"
 				+ "attribute vec4 a_color;\n" + "attribute vec2 a_texCoord0;\n"
 				+ "uniform mat4 u_worldView;\n" + "varying vec4 v_color;"
@@ -57,7 +56,6 @@ public class Game implements ApplicationListener {
 		camera.lookAt(0, 0, 0);
 		camera.up.set(0, 1, 0);
 		camera.update();
-		// camera = new OrthographicCamera(1, h / w);
 		batch = new SpriteBatch();
 
 		texture = new Texture(Gdx.files.internal("data/libgdx.png"));
@@ -81,10 +79,10 @@ public class Game implements ApplicationListener {
 	}
 
 	@Override
-	public void render() {
+	public void render() {		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
-
+		
 		Terrain.render(camera);
 
 		dragon.update();
