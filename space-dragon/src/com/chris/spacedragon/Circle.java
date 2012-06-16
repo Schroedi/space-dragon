@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
@@ -95,6 +97,7 @@ public class Circle {
 		Circle c = new Circle(1);
 		c.position = pos;
 		circles.add(c);
+		
 	}
 	
 	static void renderAll(PerspectiveCamera camera) {
@@ -104,11 +107,18 @@ public class Circle {
 	}
 
 	public void render(PerspectiveCamera camera) {
-		t+= 0.5;
+		t+= 1;
 		Matrix4 mat = camera.combined.cpy();
 		mat.translate(position);
 		mat.scale(size, size, size);
 		mat.rotate(0, 0, 1, t);
+		
+		Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
+		
+		Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+		Gdx.gl.glEnable(GL10.GL_BLEND);
+		
+
 
 		shaderCircleTexture.begin();
 		textureCircle.bind();

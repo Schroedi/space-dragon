@@ -73,9 +73,9 @@ public class Game implements ApplicationListener {
 		dragon.create();
 		
 		Circle.initializeAll();
-		Circle.addToList(new Vector3(0.0f,0.0f,-5.0f));
-		Circle.addToList(new Vector3(0.0f,0.0f,-10.0f));
 		Circle.addToList(new Vector3(3.0f,1.0f,-12.0f));
+		Circle.addToList(new Vector3(0.0f,0.0f,-10.0f));
+		Circle.addToList(new Vector3(0.0f,0.0f,-5.0f));
 	}
 
 	@Override
