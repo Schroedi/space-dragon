@@ -91,6 +91,14 @@ public class Game implements ApplicationListener {
 		
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 		
+		Vector3 campos = dragon.position.cpy();
+		campos.z += 10;
+		campos.y += 5;
+		
+		camera.position.set(campos);
+		camera.lookAt(dragon.position.x, dragon.position.y, dragon.position.z);
+		camera.update();
+		
 		Terrain.render(camera);
 
 		dragon.update();

@@ -1,5 +1,7 @@
 package com.chris.spacedragon;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
@@ -20,8 +22,8 @@ public class Terrain {
 	static {
 		for (int y = 0; y < NUMVERTY; ++y) {
 			for (int x = 0; x < NUMVERTX; ++x) {
-				float offX = x;
-				float offY = y;
+				float offX = (x - NUMVERTY/2) * 10;
+				float offY = y * -10;
 
 				verts[y * (NUMVERTX * NUMCOMP) + (x* NUMCOMP) + 0] = offX;
 				verts[y * (NUMVERTX * NUMCOMP) + (x* NUMCOMP) + 1] = 0; // y
@@ -85,6 +87,8 @@ public class Terrain {
 	}
 
 	static void render(PerspectiveCamera camera) {
+		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+
 		shaderTerrain.begin();
 		shaderTerrain.setUniformMatrix("u_worldView", camera.combined);
 

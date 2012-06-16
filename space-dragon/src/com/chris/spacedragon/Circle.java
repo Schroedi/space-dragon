@@ -116,7 +116,7 @@ public class Circle {
 		mat.scale(size, size, size);
 		mat.rotate(0, 0, 1, t);
 
-		Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
+		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 
 		Gdx.gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
 		Gdx.gl.glEnable(GL10.GL_BLEND);

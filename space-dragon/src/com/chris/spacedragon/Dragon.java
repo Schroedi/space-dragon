@@ -97,8 +97,8 @@ public class Dragon {
 		 */
 
 		// FileHandle handle = new FileHandle("models/spacedragon.obj");
-		meshBody = ObjLoader.loadObj(Gdx.files.internal(
-				"models/body.obj").read());
+		meshBody = ObjLoader.loadObj(Gdx.files.internal("models/body.obj")
+				.read());
 		/*
 		 * meshWing = new Mesh(true, 3, 0, // static mesh with 4 vertices and //
 		 * no // indices new VertexAttribute(Usage.Position, 3,
@@ -116,7 +116,7 @@ public class Dragon {
 		leftWingDown = 1.0f;
 
 		lastUpdate = System.currentTimeMillis();
-		
+
 		String vertexShader = "attribute vec4 a_position;    \n"
 				+ "attribute vec4 a_color;\n" + "attribute vec2 a_texCoord0;\n"
 				+ "uniform mat4 u_worldView;\n" + "varying vec4 v_color;"
@@ -127,16 +127,13 @@ public class Dragon {
 				+ "   v_texCoords = a_texCoord0; \n"
 				+ "   gl_Position =  u_worldView * a_position;  \n"
 				+ "}                            \n";
-		String fragmentShader = "#ifdef GL_ES\n"
-				+ "precision mediump float;\n"
-				+ "#endif\n"
-				+ "varying vec4 v_color;\n"
+		String fragmentShader = "#ifdef GL_ES\n" + "precision mediump float;\n"
+				+ "#endif\n" + "varying vec4 v_color;\n"
 				+ "varying vec2 v_texCoords;\n"
 				+ "uniform sampler2D u_texture;\n"
 				+ "void main()                                  \n"
 				+ "{                                            \n"
-				+ "  gl_FragColor = v_color;\n"
-				+ "}";
+				+ "  gl_FragColor = v_color;\n" + "}";
 		shaderDragon = new ShaderProgram(vertexShader, fragmentShader);
 	}
 
@@ -144,11 +141,18 @@ public class Dragon {
 		Matrix4 mat = camera.combined.cpy();
 		mat.translate(position);
 		mat.rotate(orientation);
+		Matrix4 shadowmat = mat.cpy();
 		Matrix4 wing = mat.cpy();
 		shaderDragon.begin();
 
 		// render body
 		shaderDragon.setUniformMatrix("u_worldView", mat);
+		meshBody.render(Game.shaderMain, GL20.GL_TRIANGLES);
+
+		// render shadow
+		shadowmat.translate(0, -position.y + 0.01f, 0);
+		shadowmat.scale(1, 0, 1);
+		shaderDragon.setUniformMatrix("u_worldView", shadowmat);
 		meshBody.render(Game.shaderMain, GL20.GL_TRIANGLES);
 
 		// render left wing
@@ -174,6 +178,8 @@ public class Dragon {
 		// pc input for now
 		long timestep = System.currentTimeMillis() - lastUpdate;
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+			position.x += -0.01;
+			position.y += +0.01;
 			if (leftWingDown < 1)
 				leftWingDown += WingMovePerMSec * timestep;
 			leftKeyDown = true;
@@ -183,6 +189,8 @@ public class Dragon {
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+			position.x += +0.01;
+			position.y += +0.01;
 			rightKeyDown = true;
 			if (rightWingDown < 1)
 				rightWingDown += WingMovePerMSec * timestep;
@@ -191,8 +199,19 @@ public class Dragon {
 				rightWingDown -= WingMovePerMSec * timestep;
 
 		}
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)
+				&& Gdx.input.isKeyPressed(Keys.LEFT)
+				&& rightWingDown >= 1
+				&& leftWingDown >= 1
+				)
+		{
+			position.y -= 0.04;
+		}
 
-		lastUpdate = System.currentTimeMillis();
+			lastUpdate = System.currentTimeMillis();
+
+		position.z -= 0.015;
+		position.y -= 0.005;
 
 	}
 }
