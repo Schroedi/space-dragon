@@ -2,6 +2,7 @@ package com.chris.spacedragon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 
@@ -9,15 +10,39 @@ public class ChaseCam extends PerspectiveCamera {
 
 	public Vector3 lookAtPosition;
 	public Quaternion lookAtOrientation;
+	public Quaternion orientation = new Quaternion(0, 0, 0, 1);
+	public Quaternion orientationConj = new Quaternion(0, 0, 0, 1);
 
 	public void update(float dt) {
-		Vector3 campos = lookAtPosition.cpy();
-		campos.z += 10;
-		campos.y += 5;
-
-		position.set(campos);
+//		Vector3 campos = lookAtPosition.cpy();
+//		campos.z += 10;
+//		campos.y += 5;
+		
+		Vector3 dest = lookAtPosition.tmp();
+		dest.set(0, 1, 3);
+		lookAtOrientation.transform(dest);
+		dest.add(lookAtPosition);
 		lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z);
-		update();
+		
+		dest.sub(position);
+		dest.mul(dt * 0.3f);
+		position.add(dest);
+		
+		orientation.slerp(lookAtOrientation, dt * 0.3f);
+		orientationConj.set(orientation);
+		orientationConj.conjugate();
+		
+		float aspect = viewportWidth / viewportHeight;
+		projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
+		view.set(orientationConj);
+		dest.set(position);
+		dest.mul(-1);
+		view.translate(dest);
+		combined.set(projection);
+		Matrix4.mul(combined.val, view.val);
+		invProjectionView.set(combined);
+		Matrix4.inv(invProjectionView.val);
+		frustum.update(invProjectionView);
 	}
 
 	public ChaseCam(Vector3 destPos, Quaternion destOrient) {
