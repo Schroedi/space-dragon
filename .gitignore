@@ -1,23 +1,13 @@
-ignore/*
-
-
 .DS_Store
 */.DS_Store
 **/**/.DS_Store
-
-
 .metadata
 */.metadata
 
-
-*/bin/**
-*/tmp/**
-*/tmp/**/*
 *.tmp
 *.bak
 *.swp
 *~.nib
-
 
 RemoteSystemsTempFiles/
 
@@ -30,14 +20,11 @@ RemoteSystemsTempFiles/
 # files for the dex VM
 *.dex
 
-
 # Java class files
 *.class
 
-
 # generated GUI files
 *R.java
-
 
 ### eclipse files we DO want
 # local.properties
@@ -47,3 +34,6 @@ RemoteSystemsTempFiles/
 
 #gwt cache
 gwt-unitCache/
+
+*.cache.*
+space-dragon-html/war/WEB-INF/

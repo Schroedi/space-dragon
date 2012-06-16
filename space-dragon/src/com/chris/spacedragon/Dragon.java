@@ -101,8 +101,8 @@ public class Dragon {
 		 * "0"));
 		 */
 
-		// FileHandle handle = new FileHandle("models/spacedragon.obj");
-		meshBody = ObjLoader.loadObj(Gdx.files.internal("models/body.obj")
+		// FileHandle handle = new FileHandle("data/models/spacedragon.obj");
+		meshBody = ObjLoader.loadObj(Gdx.files.internal("data/models/body.obj")
 				.read());
 		/*
 		 * meshWing = new Mesh(true, 3, 0, // static mesh with 4 vertices and //
@@ -114,7 +114,7 @@ public class Dragon {
 		 * //meshBody.setVertices(vertsBody); meshWing.setVertices(vertsWingUp);
 		 */
 
-		meshWing = ObjLoader.loadObj(Gdx.files.internal("models/wing.obj")
+		meshWing = ObjLoader.loadObj(Gdx.files.internal("data/models/wing.obj")
 				.read());
 
 		rightWingDown = 1.0f;

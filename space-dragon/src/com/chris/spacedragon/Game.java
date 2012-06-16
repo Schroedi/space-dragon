@@ -109,11 +109,11 @@ public class Game implements ApplicationListener {
 
 		Circle.renderAll(camera);
 		if(Circle.circles.isEmpty()) {
-			System.exit(0);
+			//System.exit(0);
 		}
 
 		if (dragon.position.y < 0) {
-			System.exit(0);
+			//System.exit(0);
 		}
 	}
 

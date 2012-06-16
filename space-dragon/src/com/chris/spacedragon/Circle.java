@@ -90,7 +90,7 @@ public class Circle {
 				+ "}";
 		shaderCircleTexture = new ShaderProgram(vertexShader, fragmentShader);
 
-		textureCircle = new Texture(Gdx.files.internal("textures/circle.png"));
+		textureCircle = new Texture(Gdx.files.internal("data/textures/circle.png"));
 	}
 
 	public Circle(float r) {
