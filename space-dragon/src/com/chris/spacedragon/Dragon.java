@@ -27,7 +27,7 @@ public class Dragon {
 	public float[] vertsWingUp = new float[15];
 	public Mesh meshBody;
 	public Mesh meshWing;
-	
+
 	public static ShaderProgram shaderDragon;
 
 	public long lastUpdate;
@@ -35,15 +35,17 @@ public class Dragon {
 	public long lastLeftKeyDown;
 	public Boolean rightKeyDown;
 	public long lastRightKeyDown;
+	public Vector3 ModelAxis;
 
-	public static float FRaVEC = 5; // forward accel with wing swinging
-	public static float GRAV = 9.81f; // basic Downward accel
-	public static float TopUPaVec = 5; // upward acceleration with wing at the
-										// top
-	public static float DownUPaVec = 2.5f; // upward acceleration with wing at
-											// the bottom
-	public static float SwUPaVec = 15; // upward acceleration with wing swinging
-	public static float WingMovePerMSec = 3f / 1000f; // wing movement per
+	public static float WingDist = 1;
+	public static float FRa = -5; // forward accel with wing swinging
+	public static Vector3 GRAV = new Vector3(0,-9.81f,0); // basic Downward accel
+	public static float TopUPa = 5; // upward acceleration with wing at the //
+									// top
+	public static float DownUPa = 2.5f; // upward acceleration with wing at //
+										// the bottom
+	public static float SwUPa = 15; // upward acceleration with wing swinging
+	public static float WingMovePerMSec = 3f / 1000f; // wing movement per //
 														// second;
 
 	// loading of assets etc
@@ -116,7 +118,6 @@ public class Dragon {
 		leftWingDown = 1.0f;
 
 		lastUpdate = System.currentTimeMillis();
-
 		String vertexShader = "attribute vec4 a_position;    \n"
 				+ "attribute vec4 a_color;\n" + "attribute vec2 a_texCoord0;\n"
 				+ "uniform mat4 u_worldView;\n" + "varying vec4 v_color;"
@@ -135,6 +136,9 @@ public class Dragon {
 				+ "{                                            \n"
 				+ "  gl_FragColor = v_color;\n" + "}";
 		shaderDragon = new ShaderProgram(vertexShader, fragmentShader);
+
+		ModelAxis = new Vector3(0, 0, 1);
+		orientation.idt();
 	}
 
 	public void render(PerspectiveCamera camera) {
@@ -176,42 +180,80 @@ public class Dragon {
 	// updates position of dragon
 	public void update() {
 		// pc input for now
+		Vector3 Left = new Vector3();
+		Vector3 Right = new Vector3();
+		Vector3 LeftDist = new Vector3(WingDist, 0, 0);
+		Vector3 RightDist = new Vector3(-WingDist, 0, 0);
+
+		ModelAxis.x = 0;
+		ModelAxis.y = 0;
+		ModelAxis.z = 1;
+
 		long timestep = System.currentTimeMillis() - lastUpdate;
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-			position.x += -0.01;
-			position.y += +0.01;
-			if (leftWingDown < 1)
+			if (leftWingDown < 1) {
+				Left.y = SwUPa;
+				Left.z = FRa;
 				leftWingDown += WingMovePerMSec * timestep;
+			} else if (leftWingDown >= 1) {
+				Left.y = DownUPa;
+				Left.z = 0;
+			} else {
+				Left.y = TopUPa;
+				Left.z = 0;
+			}
 			leftKeyDown = true;
 		} else {
-			if (leftWingDown > 0)
+			if (leftWingDown > 0) {
+				Left.z = FRa;
 				leftWingDown -= WingMovePerMSec * timestep;
+			} else if (leftWingDown <= 0) {
+				Left.y = TopUPa;
+				Left.z = 0;
+			}
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-			position.x += +0.01;
-			position.y += +0.01;
 			rightKeyDown = true;
-			if (rightWingDown < 1)
+			if (rightWingDown < 1) {
 				rightWingDown += WingMovePerMSec * timestep;
+				Right.y = SwUPa;
+				Right.z = FRa;
+			} else if (rightWingDown >= 1) {
+				Right.z = 0;
+				Right.y = DownUPa;
+			} else {
+				Right.y = TopUPa;
+				Right.z = 0;
+			}
 		} else {
-			if (rightWingDown > 0)
+			if (rightWingDown > 0) {
 				rightWingDown -= WingMovePerMSec * timestep;
-
-		}
-		if (Gdx.input.isKeyPressed(Keys.RIGHT)
-				&& Gdx.input.isKeyPressed(Keys.LEFT)
-				&& rightWingDown >= 1
-				&& leftWingDown >= 1
-				)
-		{
-			position.y -= 0.04;
+				Right.z = FRa;
+			} else if (rightWingDown <= 0) {
+				Right.y = TopUPa;
+				Right.z = 0;
+			}
 		}
 
-			lastUpdate = System.currentTimeMillis();
+		orientation.transform(Left);
+		orientation.transform(Right);
+		orientation.transform(LeftDist);
+		orientation.transform(RightDist);
+		orientation.transform(ModelAxis);
 
-		position.z -= 0.015;
-		position.y -= 0.005;
+		position.add(Left.tmp().mul(timestep/10000f)).add(Right.tmp2().mul(timestep/10000f)).add(GRAV.tmp().mul(timestep/10000f));
+
+
+		Left.crs(LeftDist);
+		Right.crs(RightDist);
+		Right.add(Left);
+		Quaternion q = new Quaternion(ModelAxis, (float) (Right.z * timestep
+				/ 600 * timestep));
+		System.out.println("" + q);
+		orientation.mul(q);
+
+		lastUpdate = System.currentTimeMillis();
 
 	}
 }

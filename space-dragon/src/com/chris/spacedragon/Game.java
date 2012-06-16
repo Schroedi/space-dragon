@@ -53,7 +53,7 @@ public class Game implements ApplicationListener {
 		float h = Gdx.graphics.getHeight();
 
 		camera = new PerspectiveCamera(75f, w, h);
-		camera.position.set(0, 5, 5);
+		camera.position.set(0, 2, 5);
 		camera.lookAt(0, 0, 0);
 		camera.up.set(0, 1, 0);
 		camera.update();
