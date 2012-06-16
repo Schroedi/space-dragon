@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.chris.spacedragon.Dragon;
 
 public class Game implements ApplicationListener {
-	private PerspectiveCamera camera;
+	private ChaseCam camera;
 	private SpriteBatch batch;
 	private Texture texture;
 	private Sprite sprite;
@@ -52,11 +52,6 @@ public class Game implements ApplicationListener {
 		float w = Gdx.graphics.getWidth();
 		float h = Gdx.graphics.getHeight();
 
-		camera = new PerspectiveCamera(75f, w, h);
-		camera.position.set(0, 1.5f, 1);
-		camera.lookAt(0, 0, 0);
-		camera.up.set(0, 1, 0);
-		camera.update();
 		batch = new SpriteBatch();
 
 		texture = new Texture(Gdx.files.internal("data/libgdx.png"));
@@ -72,6 +67,8 @@ public class Game implements ApplicationListener {
 		dragon = new Dragon();
 		dragon.create();
 		dragon.position.y = 10;
+
+		camera = new ChaseCam(dragon.position, dragon.orientation);
 
 		Circle.initializeAll();
 		Circle.addToList(new Vector3(0.0f, 10.0f, -12.0f));
@@ -92,14 +89,8 @@ public class Game implements ApplicationListener {
 
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 
-		Vector3 campos = dragon.position.cpy();
-		campos.z += 10;
-		campos.y += 5;
+		camera.update(0.1f);
 
-		camera.position.set(campos);
-		camera.lookAt(dragon.position.x, dragon.position.y, dragon.position.z);
-		camera.update();
-		
 		Circle.updateAll(dragon);
 
 		Terrain.render(camera);
@@ -108,12 +99,12 @@ public class Game implements ApplicationListener {
 		dragon.render(camera);
 
 		Circle.renderAll(camera);
-		if(Circle.circles.isEmpty()) {
-			//System.exit(0);
+		if (Circle.circles.isEmpty()) {
+			// System.exit(0);
 		}
 
 		if (dragon.position.y < 0) {
-			//System.exit(0);
+			// System.exit(0);
 		}
 	}
 
