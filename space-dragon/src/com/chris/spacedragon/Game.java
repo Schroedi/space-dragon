@@ -3,7 +3,6 @@ package com.chris.spacedragon;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
-
-import com.chris.spacedragon.Dragon;
 
 public class Game implements ApplicationListener {
 	private ChaseCam camera;
@@ -23,6 +20,8 @@ public class Game implements ApplicationListener {
 	public static Terrain terrain;
 
 	public Dragon dragon;
+	private long startTime;
+	private long lastUpdate;
 
 	@Override
 	public void create() {
