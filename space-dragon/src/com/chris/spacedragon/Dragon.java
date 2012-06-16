@@ -33,7 +33,6 @@ public class Dragon {
 
 	public static ShaderProgram shaderDragon;
 
-	public long lastUpdate;
 	public Boolean leftKeyDown;
 	public long lastLeftKeyDown;
 	public Boolean rightKeyDown;
@@ -120,7 +119,6 @@ public class Dragon {
 		rightWingDown = 1.0f;
 		leftWingDown = 1.0f;
 
-		lastUpdate = System.currentTimeMillis();
 		String vertexShader = "attribute vec4 a_position;    \n"
 				+ "attribute vec4 a_color;\n" + "attribute vec2 a_texCoord0;\n"
 				+ "uniform mat4 u_worldView;\n" + "varying vec4 v_color;"
@@ -183,7 +181,7 @@ public class Dragon {
 	}
 
 	// updates position of dragon
-	public void update() {
+	public void update(long dt) {
 		// pc input for now
 		Vector3 Left = new Vector3();
 		Vector3 Right = new Vector3();
@@ -194,7 +192,7 @@ public class Dragon {
 		ModelAxis.y = 0;
 		ModelAxis.z = -1;
 
-		long timestep = System.currentTimeMillis() - lastUpdate;
+		long timestep = dt;
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
 			if (leftWingDown < 1) {
 				Left.y = SwUPa;
@@ -257,13 +255,11 @@ public class Dragon {
 		
 		rotationspeed.mul(q).nor();
 		
-		System.out.println("" + position);
+
 		
 		orientation.mul(new Quaternion(rotationspeed)).nor();
 		
 		rotationspeed.slerp(Ident,  0.4f);
 		speed.slerp(Vector3.Zero, 0.2f);
-		lastUpdate = System.currentTimeMillis();
-
 	}
 }
