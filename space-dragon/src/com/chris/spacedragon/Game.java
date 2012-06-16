@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Vector3;
 
 import com.chris.spacedragon.Dragon;
 
@@ -70,6 +71,11 @@ public class Game implements ApplicationListener {
 
 		dragon = new Dragon();
 		dragon.create();
+		
+		Circle.initializeAll();
+		Circle.addToList(new Vector3(0.0f,0.0f,-5.0f));
+		Circle.addToList(new Vector3(0.0f,0.0f,-10.0f));
+		Circle.addToList(new Vector3(3.0f,1.0f,-12.0f));
 	}
 
 	@Override
@@ -89,6 +95,8 @@ public class Game implements ApplicationListener {
 
 		dragon.update();
 		dragon.render(camera);
+		
+		Circle.renderAll(camera);
 	}
 
 	@Override
