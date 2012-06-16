@@ -17,7 +17,10 @@ import com.badlogic.gdx.math.Vector3;
 
 public class Dragon {
 	public Vector3 position = new Vector3();
+	public Vector3 speed = new Vector3();
 	public Quaternion orientation = new Quaternion();
+	public Quaternion rotationspeed = new Quaternion();
+	public Quaternion Ident = new Quaternion(0,0,0,1);
 	// 0 = left wing up, 1 = left wing down
 	public float leftWingDown;
 	// 0 = right wing up, 1 = right wing down
@@ -40,12 +43,12 @@ public class Dragon {
 	public static float WingDist = 1;
 	public static float FRa = -5; // forward accel with wing swinging
 	public static Vector3 GRAV = new Vector3(0,-9.81f,0); // basic Downward accel
-	public static float TopUPa = 5; // upward acceleration with wing at the //
+	public static float TopUPa = 2; // upward acceleration with wing at the //
 									// top
-	public static float DownUPa = 2.5f; // upward acceleration with wing at //
+	public static float DownUPa = 1f; // upward acceleration with wing at //
 										// the bottom
-	public static float SwUPa = 15; // upward acceleration with wing swinging
-	public static float WingMovePerMSec = 3f / 1000f; // wing movement per //
+	public static float SwUPa = 20; // upward acceleration with wing swinging
+	public static float WingMovePerMSec = 5f / 1000f; // wing movement per //
 														// second;
 
 	// loading of assets etc
@@ -137,8 +140,9 @@ public class Dragon {
 				+ "  gl_FragColor = v_color;\n" + "}";
 		shaderDragon = new ShaderProgram(vertexShader, fragmentShader);
 
-		ModelAxis = new Vector3(0, 0, 1);
+		ModelAxis = new Vector3(0, 0, -1);
 		orientation.idt();
+		rotationspeed.idt();
 	}
 
 	public void render(PerspectiveCamera camera) {
@@ -160,7 +164,7 @@ public class Dragon {
 		meshBody.render(Game.shaderMain, GL20.GL_TRIANGLES);
 
 		// render left wing
-		wing.rotate(0, 0, -1, leftWingDown * -45.0f);
+		wing.rotate(0, 0, -1, leftWingDown * -70.0f);
 		shaderDragon.setUniformMatrix("u_worldView", wing);
 
 		meshWing.render(Game.shaderMain, GL20.GL_TRIANGLES);
@@ -168,7 +172,7 @@ public class Dragon {
 		// render right wing
 		wing = mat.cpy();
 		wing.scale(-1, 1, 1);
-		wing.rotate(0, 0, -1, rightWingDown * -45.0f);
+		wing.rotate(0, 0, -1, rightWingDown * -70.0f);
 
 		shaderDragon.setUniformMatrix("u_worldView", wing);
 
@@ -182,12 +186,12 @@ public class Dragon {
 		// pc input for now
 		Vector3 Left = new Vector3();
 		Vector3 Right = new Vector3();
-		Vector3 LeftDist = new Vector3(WingDist, 0, 0);
-		Vector3 RightDist = new Vector3(-WingDist, 0, 0);
+		Vector3 LeftDist = new Vector3(-WingDist, 0, 0);
+		Vector3 RightDist = new Vector3(WingDist, 0, 0);
 
 		ModelAxis.x = 0;
 		ModelAxis.y = 0;
-		ModelAxis.z = 1;
+		ModelAxis.z = -1;
 
 		long timestep = System.currentTimeMillis() - lastUpdate;
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
@@ -241,18 +245,23 @@ public class Dragon {
 		orientation.transform(LeftDist);
 		orientation.transform(RightDist);
 		orientation.transform(ModelAxis);
-
-		position.add(Left.tmp().mul(timestep/10000f)).add(Right.tmp2().mul(timestep/10000f)).add(GRAV.tmp().mul(timestep/10000f));
+		speed.add(Left.tmp().mul(timestep/10000f)).add(Right.tmp2().mul(timestep/10000f)).add(GRAV.tmp().mul(timestep/10000f));
+		position.add(speed.tmp().mul(timestep/1000f));
 
 
 		Left.crs(LeftDist);
 		Right.crs(RightDist);
 		Right.add(Left);
-		Quaternion q = new Quaternion(ModelAxis, (float) (Right.z * timestep
-				/ 600 * timestep));
-		System.out.println("" + q);
-		orientation.mul(q);
-
+		Quaternion q = new Quaternion(ModelAxis, (float) (Right.z * timestep/500f )).nor();
+		
+		rotationspeed.mul(q).nor();
+		
+		System.out.println("" + position);
+		
+		orientation.mul(new Quaternion(rotationspeed)).nor();
+		
+		rotationspeed.slerp(Ident,  0.4f);
+		speed.slerp(Vector3.Zero, 0.2f);
 		lastUpdate = System.currentTimeMillis();
 
 	}
