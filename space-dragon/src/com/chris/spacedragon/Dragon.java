@@ -148,8 +148,8 @@ public class Dragon {
 	public void render(PerspectiveCamera camera) {
 		Matrix4 mat = camera.combined.cpy();
 		mat.translate(position);
-		mat.rotate(orientation);
 		Matrix4 shadowmat = mat.cpy();
+		mat.rotate(orientation);
 		Matrix4 wing = mat.cpy();
 		shaderDragon.begin();
 
@@ -160,6 +160,7 @@ public class Dragon {
 		// render shadow
 		shadowmat.translate(0, -position.y + 0.01f, 0);
 		shadowmat.scale(1, 0, 1);
+		shadowmat.rotate(orientation);
 		shaderDragon.setUniformMatrix("u_worldView", shadowmat);
 		meshBody.render(Game.shaderMain, GL20.GL_TRIANGLES);
 
