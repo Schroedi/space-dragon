@@ -12,6 +12,8 @@ public class ChaseCam extends PerspectiveCamera {
 	public Quaternion lookAtOrientation;
 	public Quaternion orientation = new Quaternion(0, 0, 0, 1);
 	public Quaternion orientationConj = new Quaternion(0, 0, 0, 1);
+	
+	public Matrix4 skyBoxMatrix = new Matrix4();
 
 	public void update(float dt) {
 //		Vector3 campos = lookAtPosition.cpy();
@@ -43,6 +45,17 @@ public class ChaseCam extends PerspectiveCamera {
 		invProjectionView.set(combined);
 		Matrix4.inv(invProjectionView.val);
 		frustum.update(invProjectionView);
+	}
+	
+	public Matrix4 getSkyboxMatrix() {
+		float aspect = viewportWidth / viewportHeight;
+		projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
+		view.idt();
+		view.scale(20, 20, 20);
+		view.rotate(orientationConj);
+		skyBoxMatrix.set(projection);
+		Matrix4.mul(skyBoxMatrix.val, view.val);
+		return skyBoxMatrix;
 	}
 
 	public ChaseCam(Vector3 destPos, Quaternion destOrient) {

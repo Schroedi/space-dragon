@@ -18,6 +18,7 @@ public class Game implements ApplicationListener {
 	private Sprite sprite;
 	public static ShaderProgram shaderMain;
 	public static Terrain terrain;
+	public Sky sky;
 
 	public Dragon dragon;
 	private long startTime;
@@ -78,6 +79,9 @@ public class Game implements ApplicationListener {
 		Circle.addToList(new Vector3(0.0f, 10.0f, -8.0f));
 
 		startTime = System.currentTimeMillis();
+		
+		sky = new Sky();
+		sky.create();
 	}
 
 	@Override
@@ -90,11 +94,12 @@ public class Game implements ApplicationListener {
 	public void render() {
 		update();
 
-		Gdx.gl.glClearColor(1, 1, 1, 1);
+		Gdx.gl.glClearColor(0, 0, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 
 		camera.update(0.1f);
+		sky.render(camera);
 
 		Terrain.render(camera);
 
@@ -108,6 +113,7 @@ public class Game implements ApplicationListener {
 		if (dragon.position.y < 0) {
 			// System.exit(0);
 		}
+		
 	}
 
 	private void update() {
