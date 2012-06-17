@@ -141,126 +141,96 @@ public class Dragon {
 
 	// updates position of dragon
 	public void update(long dt) {
-		// pc input for now
-		Vector3 Left = new Vector3();
-		Vector3 Right = new Vector3();
-		Vector3 LeftDist = new Vector3(-WingDist / 4, 0, 1);
-		Vector3 RightDist = new Vector3(WingDist / 4, 0, 1);
-
-		ModelAxis.x = 0;
-		ModelAxis.y = 0;
-		ModelAxis.z = -1;
-
-		ModelAxisUp.x = 0;
-		ModelAxisUp.y = 1;
-		ModelAxisUp.z = 0;
-		orientation.transform(ModelAxis);
-		orientation.transform(ModelAxisUp);
-		speed.set(0, 0, 0);
-		speed.set(0,0,0);
-		
-		float UpUpmove = 2;
-		float SwingUpMove =3;
-		float SwingFrontMove =4;
-		float UpFrontMove = 4;
-		float DownFrontMove=1;
-		float DownUpMove=-1;
-	
-		
 		float timestep = dt / 1000f;
-		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+		
+		float rot = 0f;
+		if (Gdx.input.isKeyPressed(Keys.X)) {
 			if (leftWingDown < 1) {
-				//roll.mul(new Quaternion(ModelAxis,- 1));
-				Ypr.x += 60*timestep;
-				Ypr.z +=100*timestep;
 				leftWingDown += WingMovePerSec * timestep;
-				speed.y += SwingUpMove * timestep;
-				speed.z += -SwingFrontMove * timestep;
+				speed.z -= 0.1;
+				speed.y += 0.1;
+				rot += 1.0;
 			} else if (leftWingDown >= 1) {
-				speed.y += DownUpMove * timestep;
-				speed.z += -DownFrontMove * timestep;
-				//Ypr.z -=60*timestep;
 			}
 			leftKeyDown = true;
 		} else {
 			if (leftWingDown > 0) {
-				leftWingDown -= WingMovePerSec * timestep;
+				leftWingDown -= WingMovePerSec * timestep * 2f;
 			}
-			speed.y +=(float) (- Math.exp(0.5 - leftWingDown) * timestep);
-			speed.z +=- UpFrontMove * timestep;
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+		if (Gdx.input.isKeyPressed(Keys.C)) {
 			rightKeyDown = true;
 			if (rightWingDown < 1) {
-				//roll.mul(new Quaternion(ModelAxis,1));
-				//orientation.mul(new Quaternion(ModelAxisUp, -1));
-				Ypr.x += -60*timestep;
-				Ypr.z +=-100*timestep;
 				rightWingDown += WingMovePerSec * timestep;
-				speed.y += SwingUpMove * timestep;
-				speed.z += -SwingFrontMove * timestep;
+				speed.z -= 0.1;
+				speed.y += 0.1;
+				rot += -1.0;
+
 			} else if (rightWingDown >= 1) {
-				speed.y += -DownUpMove * timestep;
-				speed.z += -DownFrontMove * timestep;
-				//rientation.mul(new Quaternion(ModelAxisUp,- 0.5f));
-			} 
+			}
 			rightKeyDown = true;
 		} else {
 			if (rightWingDown > 0) {
-				rightWingDown -= WingMovePerSec * timestep;			
+				rightWingDown -= WingMovePerSec * timestep * 2f;
 			}
-			speed.y +=(float) (- Math.exp(0.5 - rightWingDown) * timestep);
-			speed.z +=- UpFrontMove * timestep;
-		}
-
-		orientation.transform(Left);
-		orientation.transform(Right);
-		orientation.transform(LeftDist);
-		orientation.transform(RightDist);
-		orientation.transform(ModelAxis);
-		speed.add(Left.tmp().mul(timestep/10000f)).add(Right.tmp2().mul(timestep/10000f)).add(GRAV.tmp().mul(timestep/10000f));
-		position.add(speed.tmp().mul(timestep/1000f));
-
-
-		Left.crs(LeftDist);
-		Right.crs(RightDist);
-		Right.add(Left);
-		Quaternion q = new Quaternion(ModelAxis, (float) (Right.z * timestep/500f )).nor();
-		
-		orientation.setEulerAngles(Ypr.x,Ypr.y,Ypr.z);
-		//orientation.mul(roll);
-		orientation.transform(speed);
-		//Ypr.slerp(target, alpha)
-		position.add(speed);
-		Ypr.lerp(Ypr.tmp().set(Ypr.x, Ypr.y, 0), 0.01f);
-		
-		//System.out.println(""+ );
-		//System.out.println(""+ Ypr.tmp().set(Ypr.x, Ypr.y, 0));
-		//orientation.slerp(Ident, 0.1f);
-		// speed.slerp(Vector3.Zero, 0.2f);
-
-		
-		orientation.mul(new Quaternion(rotationspeed)).nor();
-		
-		rotationspeed.slerp(Ident,  0.4f);
-		speed.slerp(Vector3.Zero, 0.2f);
-		
-		//long timestep = dt;
-		if (Gdx.input.isKeyPressed(Keys.D)) {
-			orientation.mul(new Quaternion(new Vector3(0,0,1), -1));
-		}
-
-		if (Gdx.input.isKeyPressed(Keys.A)) {
-			orientation.mul(new Quaternion(new Vector3(0,0,1), 1));
 		}
 		
-		if (Gdx.input.isKeyPressed(Keys.W)) {
-			orientation.mul(new Quaternion(new Vector3(1,0,0), -1));
+		rotationspeed.setFromAxis(0, 0, -1, rot);
+		orientation.mul(rotationspeed);
+		
+		if(leftWingDown > 0.5)
+		{
+			speed.z += 0.005;
+			speed.y -= 0.05;
 		}
 
-		if (Gdx.input.isKeyPressed(Keys.S)) {
-			orientation.mul(new Quaternion(new Vector3(1,0,0), 1));
+		if(rightWingDown > 0.5)
+		{
+			speed.z += 0.005;
+			speed.y -= 0.05;
 		}
+
+		speed.z += 0.005;
+		speed.y -= 0.05;
+		
+		if (speed.z < -0.5f)
+			speed.z = -0.5f;
+		if (speed.z > 0.0f)
+			speed.z = 0.0f;
+
+		if (speed.y < 0f)
+			speed.y = 0f;
+		if (speed.y > 0.5f)
+			speed.y = 0.5f;
+		
+		
+
+		// long timestep = dt;
+		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
+			orientation.mul(new Quaternion(new Vector3(0, 1, 0), -100f * timestep));
+		}
+
+		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
+			orientation.mul(new Quaternion(new Vector3(0, 1, 0), 100f * timestep));
+
+		}
+
+		if (Gdx.input.isKeyPressed(Keys.UP)) {
+			orientation.mul(new Quaternion(new Vector3(1, 0, 0), -100f * timestep));
+
+		}
+
+		if (Gdx.input.isKeyPressed(Keys.DOWN)) {
+			orientation.mul(new Quaternion(new Vector3(1, 0, 0), 100f * timestep));
+		}
+		
+		Vector3 temp = speed.tmp();
+		orientation.transform(temp);
+		temp.mul(timestep * 10f);
+		position.add(temp);
+		// apply gravity;
+		position.y -= 0.9 * timestep;
+		
 	}
 }

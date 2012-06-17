@@ -70,6 +70,9 @@ public class Game implements ApplicationListener {
 		camera = new ChaseCam(dragon.position, dragon.orientation);
 
 		Circle.initializeAll();
+		for(int i = -40; i > -10000; i -= Math.random() * 50) {
+			Circle.addToList(new Vector3((float)Math.random() * 10f - 5f, (float)Math.random() * 10f + 1f, (float)i));
+		}
 		Circle.addToList(new Vector3(0.0f, 10.0f, -12.0f));
 		Circle.addToList(new Vector3(0.0f, 10.0f, -10.0f));
 		Circle.addToList(new Vector3(0.0f, 10.0f, -8.0f));
