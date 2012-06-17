@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 
 public class Terrain {
@@ -49,21 +50,23 @@ public class Terrain {
 			}
 		}
 
-		mesh = new Mesh(true, NUMVERT, (NUMVERTX - 1) * (NUMVERTY - 1) * 6, // static
-																			// mesh
-																			// with
-																			// 4
-																			// vertices
-																			// and
-																			// no
-				// indices
-				new VertexAttribute(Usage.Position, 3,
-						ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
-						Usage.TextureCoordinates, 2,
-						ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
-
-		mesh.setVertices(verts);
-		mesh.setIndices(indices);
+		mesh = ObjLoader.loadObj(Gdx.files.internal("data/models/canyon.obj").read());
+		mesh.scale(2f, 4f, 2f);
+//		mesh = new Mesh(true, NUMVERT, (NUMVERTX - 1) * (NUMVERTY - 1) * 6, // static
+//																			// mesh
+//																			// with
+//																			// 4
+//																			// vertices
+//																			// and
+//																			// no
+//				// indices
+//				new VertexAttribute(Usage.Position, 3,
+//						ShaderProgram.POSITION_ATTRIBUTE), new VertexAttribute(
+//						Usage.TextureCoordinates, 2,
+//						ShaderProgram.TEXCOORD_ATTRIBUTE + "0"));
+//
+//		mesh.setVertices(verts);
+//		mesh.setIndices(indices);
 
 		String vertexShader = "attribute vec4 a_position;    \n"
 				+ "attribute vec4 a_color;\n" + "attribute vec2 a_texCoord0;\n"
