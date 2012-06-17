@@ -40,7 +40,7 @@ public class Sky {
 				+ "uniform sampler2D u_texture;\n"
 				+ "void main()                                  \n"
 				+ "{                                            \n"
-				+ "gl_FragColor = v_color * texture2D(u_texture, v_texCoords);\n"
+				+ "gl_FragColor = v_color * texture2D(u_texture, vec2(v_texCoords.x, 1.0 - v_texCoords.y));\n"
 				+ "}";
 		shaderSkyTexture = new ShaderProgram(vertexShader, fragmentShader);
 
@@ -59,7 +59,7 @@ public class Sky {
 
 		// render body
 		shaderSkyTexture.setUniformMatrix("u_worldView", camera.getSkyboxMatrix());
-		mesh.render(Game.shaderMain, GL20.GL_TRIANGLES);
+		mesh.render(shaderSkyTexture, GL20.GL_TRIANGLES);
 		shaderSkyTexture.end();
 		Gdx.gl.glDepthMask(true);
 

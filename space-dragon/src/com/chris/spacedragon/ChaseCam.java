@@ -51,7 +51,9 @@ public class ChaseCam extends PerspectiveCamera {
 		float aspect = viewportWidth / viewportHeight;
 		projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
 		view.idt();
-		view.scale(20, 20, 20);
+		view.scale(200, 200, 200);
+		//view.translate(position);
+
 		view.rotate(orientationConj);
 		skyBoxMatrix.set(projection);
 		Matrix4.mul(skyBoxMatrix.val, view.val);
@@ -67,6 +69,8 @@ public class ChaseCam extends PerspectiveCamera {
 		lookAt(0, 0, 0);
 		up.set(0, 1, 0);
 		update();
+		
+		far = 1000;
 
 	}
 
