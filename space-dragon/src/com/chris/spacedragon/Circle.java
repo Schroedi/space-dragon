@@ -19,6 +19,8 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 
 public class Circle {
+	private Game game;
+	
 	public static Texture textureCircle;
 
 	public static Mesh mesh;
@@ -93,13 +95,18 @@ public class Circle {
 		textureCircle = new Texture(Gdx.files.internal("data/textures/circle.png"));
 	}
 
-	public Circle(float r) {
+	public Circle(float r, Game game) {
 		size = r;
 		t = (float) (Math.random() * 360.0f);
+		this.game = game;
+	}
+	
+	public void Hit() {
+		this.game.addPoints(100);
 	}
 
-	static void addToList(Vector3 pos) {
-		Circle c = new Circle(1);
+	static void addToList(Vector3 pos, Game game) {
+		Circle c = new Circle(1, game);
 		c.position = pos;
 		circles.add(c);
 
@@ -117,6 +124,7 @@ public class Circle {
 			c.update();
 			if(c.testCollision(dragon.position))
 			{
+			  c.Hit();
 			  toRemove.add(c);
 			}
 		}

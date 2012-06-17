@@ -23,9 +23,12 @@ public class Game implements ApplicationListener {
 	public Dragon dragon;
 	private long startTime;
 	private long lastUpdate;
+	
+	private int points;
 
 	@Override
 	public void create() {
+		this.points = 0;
 
 		String vertexShader = "attribute vec4 a_position;    \n"
 				+ "attribute vec4 a_color;\n" + "attribute vec2 a_texCoord0;\n"
@@ -72,11 +75,11 @@ public class Game implements ApplicationListener {
 
 		Circle.initializeAll();
 		for(int i = -40; i > -10000; i -= Math.random() * 50) {
-			Circle.addToList(new Vector3((float)Math.random() * 10f - 5f, (float)Math.random() * 10f + 1f, (float)i));
+			Circle.addToList(new Vector3((float)Math.random() * 10f - 5f, (float)Math.random() * 10f + 1f, (float)i), this);
 		}
-		Circle.addToList(new Vector3(0.0f, 10.0f, -12.0f));
-		Circle.addToList(new Vector3(0.0f, 10.0f, -10.0f));
-		Circle.addToList(new Vector3(0.0f, 10.0f, -8.0f));
+		Circle.addToList(new Vector3(0.0f, 10.0f, -12.0f), this);
+		Circle.addToList(new Vector3(0.0f, 10.0f, -10.0f), this);
+		Circle.addToList(new Vector3(0.0f, 10.0f, -8.0f), this);
 
 		startTime = System.currentTimeMillis();
 		
@@ -144,5 +147,10 @@ public class Game implements ApplicationListener {
 
 	@Override
 	public void resume() {
+	}
+	
+	public void addPoints(int points) {
+		this.points += points;
+		System.out.println("Points: " + this.points);
 	}
 }
