@@ -7,7 +7,9 @@ import com.badlogic.gdx.files.FileHandleStream;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.VertexAttribute;
+import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -44,7 +46,9 @@ public class Dragon {
 	public long lastRightKeyDown;
 	public Vector3 ModelAxis;
 	public Vector3 ModelAxisUp;
-
+	
+	public Mesh[] Models = new Mesh[15];
+	public Texture[] Textures = new Texture[15];
 	public static float WingDist = 1;
 	public static float FRa = -5; // forward accel with wing swinging
 	public static Vector3 GRAV = new Vector3(0, -9.81f, 0); // basic Downward
@@ -76,10 +80,38 @@ public class Dragon {
 		 * Usage.TextureCoordinates, 2, ShaderProgram.TEXCOORD_ATTRIBUTE +
 		 * "0"));
 		 */
-
+		
+		
+		Models[0] =ObjLoader.loadObj(Gdx.files.internal("data/models/head.obj").read());
+		Models[1] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine1.obj").read());
+		Models[2] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine2.obj").read());
+		Models[3] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine3.obj").read());
+		Models[4] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine4.obj").read());
+		Models[5] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine5.obj").read());
+		Models[6] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine6.obj").read());
+		Models[7] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine7.obj").read());
+		Models[8] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine8.obj").read());
+		Models[9] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine9.obj").read());
+		Models[10] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine10.obj").read());
+		Models[11] =ObjLoader.loadObj(Gdx.files.internal("data/models/spine11.obj").read());
+		Models[12] =ObjLoader.loadObj(Gdx.files.internal("data/models/schwanz.obj").read());
+		
+		Textures[0]  = new Texture(Gdx.files.internal("data/textures/kopfx.png"));
+		Textures[1]  = new Texture(Gdx.files.internal("data/textures/wirbel_1x.png"));
+		Textures[2]  = new Texture(Gdx.files.internal("data/textures/wirbel_2x.png"));
+		Textures[3]  = new Texture(Gdx.files.internal("data/textures/wirbel_3x.png"));
+		Textures[4]  = new Texture(Gdx.files.internal("data/textures/wirbel_4x.png"));
+		Textures[5]  = new Texture(Gdx.files.internal("data/textures/wirbel_5x.png"));
+		Textures[6]  = new Texture(Gdx.files.internal("data/textures/wirbel_6x.png"));
+		Textures[7]  = new Texture(Gdx.files.internal("data/textures/wirbel_7x.png"));
+		Textures[8]  = new Texture(Gdx.files.internal("data/textures/wirbel_8x.png"));
+		Textures[9]  = new Texture(Gdx.files.internal("data/textures/wirbel_9x.png"));
+		Textures[10] = new Texture(Gdx.files.internal("data/textures/wirbel_10x.png"));
+		Textures[11] = new Texture(Gdx.files.internal("data/textures/wirbel_10x.png"));
+		Textures[12] = new Texture(Gdx.files.internal("data/textures/schwanzx.png"));
+		
 		// FileHandle handle = new FileHandle("data/models/spacedragon.obj");
-		meshBody = ObjLoader.loadObj(Gdx.files.internal("data/models/body.obj")
-				.read());
+		meshBody = ObjLoader.loadObj(Gdx.files.internal("data/models/body.obj").read());
 		/*
 		 * meshWing = new Mesh(true, 3, 0, // static mesh with 4 vertices and //
 		 * no // indices new VertexAttribute(Usage.Position, 3,
@@ -102,6 +134,9 @@ public class Dragon {
 		FileHandle fragmentShader =  Gdx.files.internal("data/shader/dragon.fsh");
 		shaderDragon = new ShaderProgram(vertexShader, fragmentShader);
 
+		String [] args = shaderDragon.getAttributes();
+		VertexAttributes va = meshBody.getVertexAttributes();
+		
 		ModelAxis = new Vector3(0, 0, -1);
 		ModelAxisUp = new Vector3(0, 1, 0);
 		orientation.idt();
@@ -121,21 +156,29 @@ public class Dragon {
 
 		// render body
 		shaderDragon.setUniformMatrix("u_worldView", mat);
-		meshBody.render(Game.shaderMain, GL20.GL_TRIANGLES);
+		//meshBody.render(shaderDragon, GL20.GL_TRIANGLES);
 
 		// render shadow
-		shadowmat.translate(0, -position.y + 0.01f, 0);
-		shadowmat.scale(1, 0, 1);
-		shadowmat.rotate(orientation);
-		shaderDragon.setUniformMatrix("u_worldView", shadowmat);
-		meshBody.render(Game.shaderMain, GL20.GL_TRIANGLES);
-
+		//shadowmat.translate(0, -position.y + 0.01f, 0);
+		//shadowmat.scale(1, 0, 1);
+		//shadowmat.rotate(orientation);
+		//shaderDragon.setUniformMatrix("u_worldView", shadowmat);
+		for(int i=0; i<13;i++)
+		{
+			Textures[i].bind();
+			
+			Models[i].render(shaderDragon, GL20.GL_TRIANGLES);
+		}
+		
+		
+		
+		
 		// render left wing
 		wing.rotate(0, 0, -1, 50.0f);
 		wing.rotate(0, 0, -1, leftWingDown * -70.0f);
 		shaderDragon.setUniformMatrix("u_worldView", wing);
 
-		meshWing.render(Game.shaderMain, GL20.GL_TRIANGLES);
+		meshWing.render(shaderDragon, GL20.GL_TRIANGLES);
 
 		// render right wing
 		wing = mat.cpy();
@@ -145,7 +188,7 @@ public class Dragon {
 
 		shaderDragon.setUniformMatrix("u_worldView", wing);
 
-		meshWing.render(Game.shaderMain, GL20.GL_TRIANGLES);
+		meshWing.render(shaderDragon, GL20.GL_TRIANGLES);
 
 		shaderDragon.end();
 		

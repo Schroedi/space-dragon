@@ -7,6 +7,6 @@ varying vec2 v_texCoords;
 uniform sampler2D u_texture;
 void main()                                  
 {                                            
-gl_FragColor = mix(v_color, abs(v_normal), .5);                  
-// gl_FragColor = vec4(v_normal.xyz, 1.0); 
+//gl_FragColor = mix(v_color, abs(v_normal), .5);                  
+ gl_FragColor = texture2D(u_texture, vec2(v_texCoords.x,1-v_texCoords.y));
 };

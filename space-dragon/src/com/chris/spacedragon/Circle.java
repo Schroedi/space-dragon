@@ -149,7 +149,7 @@ public class Circle {
 
 		// render body
 		shaderCircleTexture.setUniformMatrix("u_worldView", mat);
-		mesh.render(Game.shaderMain, GL20.GL_TRIANGLE_FAN);
+		mesh.render(shaderCircleTexture, GL20.GL_TRIANGLE_FAN);
 		shaderCircleTexture.end();
 	}
 
