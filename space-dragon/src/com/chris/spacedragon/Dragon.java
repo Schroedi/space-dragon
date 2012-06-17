@@ -2,14 +2,12 @@ package com.chris.spacedragon;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.Input.Orientation;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.files.FileHandleStream;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
-import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
@@ -90,9 +88,8 @@ public class Dragon {
 	
 		rightWingDown = 1.0f;
 		leftWingDown = 1.0f;
+
 		
-		VertexAttributes vo = meshBody.getVertexAttributes();
-		lastUpdate = System.currentTimeMillis();
 		FileHandle vertexShader = Gdx.files.internal("data/shader/dragon.vsh");
 		FileHandle fragmentShader =  Gdx.files.internal("data/shader/dragon.fsh");
 		shaderDragon = new ShaderProgram(vertexShader, fragmentShader);
@@ -216,6 +213,20 @@ public class Dragon {
 			speed.y +=(float) (- Math.exp(0.5 - rightWingDown) * timestep);
 			speed.z +=- UpFrontMove * timestep;
 		}
+
+		orientation.transform(Left);
+		orientation.transform(Right);
+		orientation.transform(LeftDist);
+		orientation.transform(RightDist);
+		orientation.transform(ModelAxis);
+		speed.add(Left.tmp().mul(timestep/10000f)).add(Right.tmp2().mul(timestep/10000f)).add(GRAV.tmp().mul(timestep/10000f));
+		position.add(speed.tmp().mul(timestep/1000f));
+
+
+		Left.crs(LeftDist);
+		Right.crs(RightDist);
+		Right.add(Left);
+		Quaternion q = new Quaternion(ModelAxis, (float) (Right.z * timestep/500f )).nor();
 		
 		orientation.setEulerAngles(Ypr.x,Ypr.y,Ypr.z);
 		//orientation.mul(roll);
@@ -228,7 +239,28 @@ public class Dragon {
 		//System.out.println(""+ Ypr.tmp().set(Ypr.x, Ypr.y, 0));
 		//orientation.slerp(Ident, 0.1f);
 		// speed.slerp(Vector3.Zero, 0.2f);
-		lastUpdate = System.currentTimeMillis();
 
+		
+		orientation.mul(new Quaternion(rotationspeed)).nor();
+		
+		rotationspeed.slerp(Ident,  0.4f);
+		speed.slerp(Vector3.Zero, 0.2f);
+		
+		//long timestep = dt;
+		if (Gdx.input.isKeyPressed(Keys.D)) {
+			orientation.mul(new Quaternion(new Vector3(0,0,1), -1));
+		}
+
+		if (Gdx.input.isKeyPressed(Keys.A)) {
+			orientation.mul(new Quaternion(new Vector3(0,0,1), 1));
+		}
+		
+		if (Gdx.input.isKeyPressed(Keys.W)) {
+			orientation.mul(new Quaternion(new Vector3(1,0,0), -1));
+		}
+
+		if (Gdx.input.isKeyPressed(Keys.S)) {
+			orientation.mul(new Quaternion(new Vector3(1,0,0), 1));
+		}
 	}
 }

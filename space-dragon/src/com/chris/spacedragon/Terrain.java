@@ -51,7 +51,8 @@ public class Terrain {
 		}
 
 		mesh = ObjLoader.loadObj(Gdx.files.internal("data/models/canyon.obj").read());
-		mesh.scale(2f, 4f, 2f);
+		
+		//mesh.scale(2f, 4f, 2f);
 //		mesh = new Mesh(true, NUMVERT, (NUMVERTX - 1) * (NUMVERTY - 1) * 6, // static
 //																			// mesh
 //																			// with
@@ -75,7 +76,7 @@ public class Terrain {
 				+ "varying vec2 v_texCoords;"
 				+ "void main()                  \n"
 				+ "{                            \n"
-				+ "   v_color = vec4(1, 0.5, 1, 1); \n"
+				+ "   v_color = a_position; \n"
 				+ "   v_texCoords = a_texCoord0; \n"
 				+ "   gl_Position =  u_worldView * a_position;  \n"
 				+ "}                            \n";
