@@ -3,7 +3,6 @@ package com.chris.spacedragon;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -11,8 +10,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector3;
-
-import com.chris.spacedragon.Dragon;
 
 public class Game implements ApplicationListener {
 	private ChaseCam camera;
@@ -23,6 +20,8 @@ public class Game implements ApplicationListener {
 	public static Terrain terrain;
 
 	public Dragon dragon;
+	private long startTime;
+	private long lastUpdate;
 
 	@Override
 	public void create() {
@@ -74,6 +73,8 @@ public class Game implements ApplicationListener {
 		Circle.addToList(new Vector3(0.0f, 10.0f, -12.0f));
 		Circle.addToList(new Vector3(0.0f, 10.0f, -10.0f));
 		Circle.addToList(new Vector3(0.0f, 10.0f, -8.0f));
+
+		startTime = System.currentTimeMillis();
 	}
 
 	@Override
@@ -84,18 +85,16 @@ public class Game implements ApplicationListener {
 
 	@Override
 	public void render() {
+		update();
+
 		Gdx.gl.glClearColor(1, 1, 1, 1);
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
-
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 
 		camera.update(0.1f);
 
-		Circle.updateAll(dragon);
-
 		Terrain.render(camera);
 
-		dragon.update();
 		dragon.render(camera);
 
 		Circle.renderAll(camera);
@@ -105,6 +104,24 @@ public class Game implements ApplicationListener {
 
 		if (dragon.position.y < 0) {
 			// System.exit(0);
+		}
+	}
+
+	private void update() {
+		// 3 seconds wait at the beginning
+		if (System.currentTimeMillis() - startTime > 3000) {
+			long dt = System.currentTimeMillis() - lastUpdate;
+			while (dt > 16) {
+				lastUpdate += 16;
+				dt -= 16;
+				
+				// update your objects here using a constant dt of 16ms
+				Circle.updateAll(dragon);
+				dragon.update(16);				
+			}
+			
+		} else {
+			lastUpdate = System.currentTimeMillis();
 		}
 	}
 
