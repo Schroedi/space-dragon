@@ -69,7 +69,6 @@ public class Game implements ApplicationListener {
 		sprite.setPosition(-sprite.getWidth() / 2, -sprite.getHeight() / 2);
 
 		dragon = new Dragon();
-		dragon.setGame(this);
 		dragon.create();
 		dragon.position.y = 10;
 
@@ -153,9 +152,6 @@ public class Game implements ApplicationListener {
 	
 	public void addPoints(int points) {
 		this.points += points;
-	}
-	
-	public int getPoints() {
-		return this.points;
+		this.dragon.setPoints(this.points);
 	}
 }

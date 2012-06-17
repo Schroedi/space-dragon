@@ -60,10 +60,11 @@ public class Dragon {
 	public BitmapFont bitmapFont;
 	public SpriteBatch spriteBatch;
 	
-	public Game game;
+	public String points;
 	
 	// loading of assets etc
 	public void create() {
+		this.points = "0";
 		int i = 0;
 
 	
@@ -105,6 +106,9 @@ public class Dragon {
 		ModelAxisUp = new Vector3(0, 1, 0);
 		orientation.idt();
 		rotationspeed.idt();
+		
+		this.bitmapFont = new BitmapFont();
+		this.spriteBatch = new SpriteBatch();
 	}
 
 	public void render(PerspectiveCamera camera) {
@@ -145,11 +149,9 @@ public class Dragon {
 
 		shaderDragon.end();
 		
-		this.bitmapFont = new BitmapFont();
-		this.spriteBatch = new SpriteBatch();
 		this.spriteBatch.begin();
 		bitmapFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		bitmapFont.draw(this.spriteBatch, Integer.toString(this.game.getPoints()), 25, 60);
+		bitmapFont.draw(this.spriteBatch, this.points, 25, 60);
 		this.spriteBatch.end();
 	}
 
@@ -247,8 +249,8 @@ public class Dragon {
 		position.y -= 0.9 * timestep;
 		
 	}
-	
-	public void setGame(Game game) {
-		this.game = game;
+		
+	public void setPoints(int points) {
+		this.points = Integer.toString(points);
 	}
 }
