@@ -143,7 +143,7 @@ public class Dragon {
 	}
 
 	// updates position of dragon
-	public void update() {
+	public void update(long dt) {
 		// pc input for now
 		Vector3 Left = new Vector3();
 		Vector3 Right = new Vector3();
@@ -170,7 +170,7 @@ public class Dragon {
 		float DownUpMove=-1;
 	
 		
-		float timestep = (System.currentTimeMillis() - lastUpdate) / 1000f;
+		float timestep = dt / 1000f;
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
 			if (leftWingDown < 1) {
 				//roll.mul(new Quaternion(ModelAxis,- 1));
