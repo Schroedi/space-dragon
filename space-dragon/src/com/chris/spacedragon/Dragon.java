@@ -154,8 +154,13 @@ public class Dragon {
 		Matrix4 wing = mat.cpy();
 		shaderDragon.begin();
 
+		Matrix4 matWorldView = camera.view.cpy();
+		matWorldView.translate(position);
+		matWorldView.rotate(orientation);
 		// render body
 		shaderDragon.setUniformMatrix("u_worldView", mat);
+		shaderDragon.setUniformMatrix("u_realView", camera.view);
+		shaderDragon.setUniformMatrix("u_realWorldView", matWorldView);
 		//meshBody.render(shaderDragon, GL20.GL_TRIANGLES);
 
 		// render shadow
