@@ -93,6 +93,8 @@ public class Dragon {
 		FileHandle vertexShader = Gdx.files.internal("data/shader/dragon.vsh");
 		FileHandle fragmentShader =  Gdx.files.internal("data/shader/dragon.fsh");
 		shaderDragon = new ShaderProgram(vertexShader, fragmentShader);
+		if (!shaderDragon.isCompiled())
+			System.err.println(shaderDragon.getLog());
 
 		ModelAxis = new Vector3(0, 0, -1);
 		ModelAxisUp = new Vector3(0, 1, 0);
