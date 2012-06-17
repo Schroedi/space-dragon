@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.Mesh;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.VertexAttribute;
 import com.badlogic.gdx.graphics.VertexAttributes.Usage;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.loaders.obj.ObjLoader;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
@@ -55,6 +57,11 @@ public class Dragon {
 	public static float WingMovePerSec = 2.0f; // wing movement per //
 												// second;
 
+	public BitmapFont bitmapFont;
+	public SpriteBatch spriteBatch;
+	
+	public Game game;
+	
 	// loading of assets etc
 	public void create() {
 		int i = 0;
@@ -137,6 +144,13 @@ public class Dragon {
 		meshWing.render(Game.shaderMain, GL20.GL_TRIANGLES);
 
 		shaderDragon.end();
+		
+		this.bitmapFont = new BitmapFont();
+		this.spriteBatch = new SpriteBatch();
+		this.spriteBatch.begin();
+		bitmapFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		bitmapFont.draw(this.spriteBatch, Integer.toString(this.game.getPoints()), 25, 60);
+		this.spriteBatch.end();
 	}
 
 	// updates position of dragon
@@ -232,5 +246,9 @@ public class Dragon {
 		// apply gravity;
 		position.y -= 0.9 * timestep;
 		
+	}
+	
+	public void setGame(Game game) {
+		this.game = game;
 	}
 }

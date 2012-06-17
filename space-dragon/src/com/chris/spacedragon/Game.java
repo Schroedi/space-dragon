@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureFilter;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -68,6 +69,7 @@ public class Game implements ApplicationListener {
 		sprite.setPosition(-sprite.getWidth() / 2, -sprite.getHeight() / 2);
 
 		dragon = new Dragon();
+		dragon.setGame(this);
 		dragon.create();
 		dragon.position.y = 10;
 
@@ -151,6 +153,9 @@ public class Game implements ApplicationListener {
 	
 	public void addPoints(int points) {
 		this.points += points;
-		System.out.println("Points: " + this.points);
+	}
+	
+	public int getPoints() {
+		return this.points;
 	}
 }
