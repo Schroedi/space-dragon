@@ -129,10 +129,11 @@ public class Dragon {
 		rightWingDown = 1.0f;
 		leftWingDown = 1.0f;
 
-		
-		FileHandle vertexShader = Gdx.files.internal("data/shader/dragon.vsh");
-		FileHandle fragmentShader =  Gdx.files.internal("data/shader/dragon.fsh");
+
+		String vertexShader = Gdx.files.internal("data/shader/dragon.vsh").readString();
+		String fragmentShader =  Gdx.files.internal("data/shader/dragon.fsh").readString();
 		shaderDragon = new ShaderProgram(vertexShader, fragmentShader);
+		//System.out.println(shaderDragon.getLog());
 
 		String [] args = shaderDragon.getAttributes();
 		VertexAttributes va = meshBody.getVertexAttributes();
@@ -142,7 +143,7 @@ public class Dragon {
 		orientation.idt();
 		rotationspeed.idt();
 		
-		this.bitmapFont = new BitmapFont();
+	//	this.bitmapFont = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"),true);
 		this.spriteBatch = new SpriteBatch();
 	}
 
@@ -161,6 +162,7 @@ public class Dragon {
 		shaderDragon.setUniformMatrix("u_worldView", mat);
 		shaderDragon.setUniformMatrix("u_realView", camera.view);
 		shaderDragon.setUniformMatrix("u_realWorldView", matWorldView);
+		shaderDragon.setUniformf("sunDir", 0,1,0);
 		//meshBody.render(shaderDragon, GL20.GL_TRIANGLES);
 
 		// render shadow
@@ -174,33 +176,34 @@ public class Dragon {
 			
 			Models[i].render(shaderDragon, GL20.GL_TRIANGLES);
 		}
+	
 		
-		
-		
-		
+		shaderDragon.end();
+		Game.shaderMain.begin();
 		// render left wing
 		wing.rotate(0, 0, -1, 50.0f);
 		wing.rotate(0, 0, -1, leftWingDown * -70.0f);
-		shaderDragon.setUniformMatrix("u_worldView", wing);
-
-		meshWing.render(shaderDragon, GL20.GL_TRIANGLES);
-
+		Game.shaderMain.setUniformMatrix("u_worldView", wing);
+		
+		meshWing.render(Game.shaderMain, GL20.GL_TRIANGLES);
+		Game.shaderMain.end();
+		
 		// render right wing
 		wing = mat.cpy();
 		wing.scale(-1, 1, 1);
 		wing.rotate(0, 0, -1, 50.0f);
 		wing.rotate(0, 0, -1, rightWingDown * -70.0f);
-
+		shaderDragon.begin();
 		shaderDragon.setUniformMatrix("u_worldView", wing);
 
 		meshWing.render(shaderDragon, GL20.GL_TRIANGLES);
 
 		shaderDragon.end();
 		
-		this.spriteBatch.begin();
-		bitmapFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		bitmapFont.draw(this.spriteBatch, this.points, 25, 60);
-		this.spriteBatch.end();
+	//	this.spriteBatch.begin();
+	///	bitmapFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//	bitmapFont.draw(this.spriteBatch, this.points, 25, 60);
+	//	this.spriteBatch.end();
 	}
 
 	// updates position of dragon

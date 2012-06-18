@@ -151,6 +151,8 @@ public class Circle {
 		shaderCircleTexture.setUniformMatrix("u_worldView", mat);
 		mesh.render(shaderCircleTexture, GL20.GL_TRIANGLE_FAN);
 		shaderCircleTexture.end();
+		Gdx.gl.glDisable(GL10.GL_BLEND);
+		Gdx.gl.glDisable(GL10.GL_DEPTH_TEST);
 	}
 
 	public void update() {

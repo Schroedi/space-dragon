@@ -50,7 +50,7 @@ public class Terrain {
 			}
 		}
 
-		mesh = ObjLoader.loadObj(Gdx.files.internal("data/models/canyon.obj").read());
+		//mesh = ObjLoader.loadObj(Gdx.files.internal("data/models/canyon.obj").read());
 		
 		//mesh.scale(2f, 4f, 2f);
 //		mesh = new Mesh(true, NUMVERT, (NUMVERTX - 1) * (NUMVERTY - 1) * 6, // static
@@ -92,12 +92,13 @@ public class Terrain {
 
 	static void render(PerspectiveCamera camera) {
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
+		//Gdx.gl.glCullFace(Gdx.gl20.GL_CW);
 
-		shaderTerrain.begin();
-		shaderTerrain.setUniformMatrix("u_worldView", camera.combined);
+	//	shaderTerrain.begin();
+	//	shaderTerrain.setUniformMatrix("u_worldView", camera.combined);
 
-		Terrain.mesh.render(Game.shaderMain, GL20.GL_TRIANGLES);
+		//Terrain.mesh.render(shaderTerrain, GL20.GL_TRIANGLES);
 
-		shaderTerrain.end();
+		//shaderTerrain.end();
 	}
 }

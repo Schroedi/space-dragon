@@ -71,6 +71,7 @@ public class ChaseCam extends PerspectiveCamera {
 		update();
 		
 		far = 1000;
+		near = 0.1f;
 
 	}
 
