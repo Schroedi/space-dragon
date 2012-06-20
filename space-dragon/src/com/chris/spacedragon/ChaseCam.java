@@ -65,7 +65,7 @@ public class ChaseCam extends PerspectiveCamera {
 		lookAtPosition = destPos;
 		lookAtOrientation = destOrient;
 
-		position.set(0, 1.5f, 1);
+		position.set(30, 1.5f, 0);
 		lookAt(0, 0, 0);
 		up.set(0, 1, 0);
 		update();
