@@ -102,7 +102,7 @@ public class Circle {
 	}
 	
 	public void Hit() {
-		this.game.addPoints(100);
+		this.game.addPoints(1);
 	}
 
 	static void addToList(Vector3 pos, Game game) {

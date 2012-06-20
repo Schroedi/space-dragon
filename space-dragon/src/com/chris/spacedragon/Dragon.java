@@ -154,8 +154,7 @@ public class Dragon {
 		orientation.idt();
 		rotationspeed.idt();
 
-		// this.bitmapFont = new
-		// BitmapFont(Gdx.files.internal("data/arial-15.fnt"),true);
+		this.bitmapFont = new BitmapFont(Gdx.files.internal("data/arial-15.fnt"), false);
 		this.spriteBatch = new SpriteBatch();
 
 		for (int j = 0; j < 4; j++) {
@@ -175,12 +174,14 @@ public class Dragon {
 	final float[] WingGlideAngle = new float[] { 7.5f, -6.5f, 6.5f, 20.5f };
 	final float[] WingStartAngle = new float[] { -13f, -3f, 17f, 13f };
 	float[] Wingrad = new float[4];
+	boolean leftGlide = false;
+	boolean rightGlide = false;
 
 	public void render(PerspectiveCamera camera) {
 		Matrix4 mat = camera.combined.cpy();
 		mat.translate(position);
+		mat.rotate(orientation);
 		Matrix4 shadowmat = mat.cpy();
-		 mat.rotate(orientation);
 		Matrix4 wing = mat.cpy();
 		shaderDragon.begin();
 
@@ -213,6 +214,7 @@ public class Dragon {
 		Wingrad[2] = (float) (74.5 * Math.sin(2 * pi * x - 0.5 * 2 * pi) - 7.5) / 2f;
 		Wingrad[3] = (float) (67.5 * Math.sin(2 * pi * x - 0.125 * 2 * pi) + 8.5) / 2f;
 		float incline = leftWingAngle - x;
+		leftGlide = Math.abs(incline) == 0 && Math.abs(0.75 - x) < 0.01f && leftKeyDown;
 		leftWingAngle = x;
 		wing.set(mat);
 		for (int i = 0; i < 4; i++) {
@@ -222,7 +224,7 @@ public class Dragon {
 
 			WingTramsforms[i].translate(WingPositions[i]);
 			WingTramsforms[i].rotate(WingAxis, WingStartAngle[i]);
-			if (Math.abs(incline) == 0 && Math.abs(0.75 - x) < 0.01f && leftKeyDown)
+			if (leftGlide)
 				WingTramsforms[i].rotate(WingAxis, WingGlideAngle[i]);
 			else
 				WingTramsforms[i].rotate(WingAxis, Wingrad[i]);
@@ -242,6 +244,7 @@ public class Dragon {
 		Wingrad[2] = (float) (74.5 * Math.sin(2 * pi * x - 0.5 * 2 * pi) - 7.5) / 2f;
 		Wingrad[3] = (float) (67.5 * Math.sin(2 * pi * x - 0.125 * 2 * pi) + 8.5) / 2f;
 		incline = rightWingAngle - x;
+		rightGlide = Math.abs(incline) == 0 && Math.abs(0.75 - x) < 0.01f && rightKeyDown;
 		rightWingAngle = x;
 		for (int i = 0; i < 4; i++) {
 			WingTramsforms[i].idt();
@@ -250,7 +253,7 @@ public class Dragon {
 
 			WingTramsforms[i].translate(WingPositions[i]);
 			WingTramsforms[i].rotate(WingAxis, WingStartAngle[i]);
-			if (Math.abs(incline) == 0 && Math.abs(0.75 - x) < 0.01f && rightKeyDown)
+			if (rightGlide)
 				WingTramsforms[i].rotate(WingAxis, WingGlideAngle[i]);
 			else
 				WingTramsforms[i].rotate(WingAxis, Wingrad[i]);
@@ -262,28 +265,36 @@ public class Dragon {
 		}
 		shaderDragon.end();
 
-		// this.spriteBatch.begin();
-		// / bitmapFont.setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		// bitmapFont.draw(this.spriteBatch, this.points, 25, 60);
-		// this.spriteBatch.end();
+		this.spriteBatch.begin();
+		bitmapFont.setColor(1.0f, 0.0f, 0.0f, 1.0f);
+		bitmapFont.draw(this.spriteBatch, "Points: "+this.points, 10, 60);
+		bitmapFont.draw(this.spriteBatch,"Speed: "+((int)(this.speed.len()*200)), 10, 80);
+		bitmapFont.draw(this.spriteBatch,"use x and c to flap your wings, arrow keys to navigate (big flaps make you faster)", 10, 20);
+		this.spriteBatch.end();
 	}
 
 	// updates position of dragon
 
 	float leftWingMin = 0;
 	float rightWingMin = 0;
+	float leftWingMinAc = 0;
+	float rightWingMinAc = 0;
+	Quaternion rollientation = new Quaternion().idt();
+	Quaternion calcientation = new Quaternion().idt();
+
 	public void update(long dt) {
 		float timestep = dt / 1000f;
 
 		float rot = 0f;
 		if (Gdx.input.isKeyPressed(Keys.X)) {
-			if (!leftKeyDown)
+			if (!leftKeyDown){
 				leftWingMin = Math.min(leftWingDown, 0.5f);
-
+				leftWingMinAc= leftWingDown;
+			}
 			if (leftWingDown < 1 - leftWingMin) {
 				leftWingDown += WingMovePerSec * timestep;
-				speed.z -= 0.1;
-				speed.y += 0.05;
+				speed.z -= 0.05* timestep*(1-(leftWingMinAc*leftWingMinAc*1.5));
+				// speed.y += 0.05;
 				rot += 1.0;
 			} else if (leftWingDown >= 1 + leftWingMin && leftWingDown <= 1.5f) {
 				leftWingDown += WingMovePerSec * timestep;
@@ -307,88 +318,92 @@ public class Dragon {
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.C)) {
-			
-				if (!rightKeyDown)
-					rightWingMin = Math.min(rightWingDown, 0.5f);
 
-				if (rightWingDown < 1 - rightWingMin) {
-					rightWingDown += WingMovePerSec * timestep;
-					speed.z -= 0.1;
-					speed.y += 0.05;
-					rot += 1.0;
-				} else if (rightWingDown >= 1 + rightWingMin && rightWingDown <= 1.5f) {
-					rightWingDown += WingMovePerSec * timestep;
+			if (!rightKeyDown){
+				rightWingMin = Math.min(rightWingDown, 0.5f);
+				rightWingMinAc = rightWingDown;
+			}
+			if (rightWingDown < 1 - rightWingMin) {
+				rightWingDown += WingMovePerSec * timestep;
+				speed.z -= 0.05* timestep*(1-(rightWingDown*rightWingDown*1.5f));
+				// speed.y += 0.05;
+				rot -= 1.0;
+			} else if (rightWingDown >= 1 + rightWingMin && rightWingDown <= 1.5f) {
+				rightWingDown += WingMovePerSec * timestep;
 
-				} else if (rightWingDown >= 1 - rightWingMin && rightWingDown < 1.5f - rightWingMin) {
-					rightWingDown = 1 + rightWingMin;
-				}
-
-				rightKeyDown = true;
-			} else {
-				if (rightKeyDown)
-					rightWingDown = rightWingDown - (rightWingDown > 1 ? 2 * (rightWingDown - 1) : 0);
-
-				if (rightWingDown > 0) {
-					rightWingDown -= WingMovePerSec * timestep;
-				}
-				if (rightWingDown < 0)
-					rightWingDown = 0;
-				rightKeyDown = false;
-
+			} else if (rightWingDown >= 1 - rightWingMin && rightWingDown < 1.5f - rightWingMin) {
+				rightWingDown = 1 + rightWingMin;
 			}
 
-		// rotationspeed.setFromAxis(0, 0, -1, rot);
-		// orientation.mul(rotationspeed);
+			rightKeyDown = true;
+		} else {
+			if (rightKeyDown)
+				rightWingDown = rightWingDown - (rightWingDown > 1 ? 2 * (rightWingDown - 1) : 0);
 
-		if (leftWingDown > 0.5) {
-			speed.z += 0.005;
-			speed.y -= 0.05;
+			if (rightWingDown > 0) {
+				rightWingDown -= WingMovePerSec * timestep;
+			}
+			if (rightWingDown < 0)
+				rightWingDown = 0;
+			rightKeyDown = false;
+
 		}
 
-		if (rightWingDown > 0.5) {
-			speed.z += 0.005;
-			speed.y -= 0.05;
-		}
+		rotationspeed.setFromAxis(0, 0, -1, rot);
+		calcientation.mul(rotationspeed).nor();
+		// orientation.mul(rotationspeed).nor();
+		// Vector3 v = new Vector3(0,1,0);
+		// orientation.transform(v);
+		// System.out.println(v);
+		// Quaternion q =
+		// (rollientation.cpy().conjugate().mul(orientation.cpy()));
 
-		speed.z += 0.005;
-		speed.y -= 0.05;
-
-		if (speed.z < -0.5f)
-			speed.z = -0.5f;
-		if (speed.z > 0.0f)
-			speed.z = 0.0f;
-
-		if (speed.y < 0f)
-			speed.y = 0f;
-		if (speed.y > 0.5f)
-			speed.y = 0.5f;
-
+		// calcientation.mul(rollientation);
 		// long timestep = dt;
 		if (Gdx.input.isKeyPressed(Keys.RIGHT)) {
-			orientation.mul(new Quaternion(new Vector3(0, 1, 0), -100f * timestep));
+			calcientation.mul(new Quaternion(new Vector3(0, 1, 0), -50 * timestep));
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.LEFT)) {
-			orientation.mul(new Quaternion(new Vector3(0, 1, 0), 100f * timestep));
+			calcientation.mul(new Quaternion(new Vector3(0, 1, 0), 50 * timestep));
 
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.UP)) {
-			orientation.mul(new Quaternion(new Vector3(1, 0, 0), -100f * timestep));
+			calcientation.mul(new Quaternion(new Vector3(1, 0, 0), -50 * timestep));
 
 		}
 
 		if (Gdx.input.isKeyPressed(Keys.DOWN)) {
-			orientation.mul(new Quaternion(new Vector3(1, 0, 0), 100f * timestep));
+			calcientation.mul(new Quaternion(new Vector3(1, 0, 0), 50 * timestep));
 		}
+		// calcientation.mul(rollientation.cpy().conjugate());
 
+		Vector3 v2 = new Vector3(0, 0, -1);
+		orientation.transform(v2);
+		float f2 = v2.dot(0, 1, 0);
+
+		orientation.set(calcientation);
 		Vector3 temp = speed.tmp();
-		orientation.transform(temp);
-		temp.mul(timestep * 10f);
+		calcientation.transform(temp);
+		//System.out.println(temp.len());
+
 		position.add(temp);
 		// apply gravity;
-		speed.y -= 0.9 * timestep;
-		speed.lerp(new Vector3(0, 0, 0), 0.05f);
+
+		speed.y -= (0.9 - (leftGlide ? 1f*f2 : 0) - (rightGlide ? 1f*f2 : 0)) * timestep * 0.01f;
+		// speed.z-=- f2*30f* timestep;
+
+		Vector3 v = new Vector3(1, 0, 0);
+		orientation.transform(v);
+
+		float f = v.dot(0, 1, 0);
+		if (f < -0.001)
+			calcientation.mul(new Quaternion().setFromAxis(0, 0, -1, -.2f));
+		if (f > 0.001)
+			calcientation.mul(new Quaternion().setFromAxis(0, 0, -1, .2f));
+		
+		speed.lerp(new Vector3(0, 0, 0), 0.001f);
 
 	}
 
