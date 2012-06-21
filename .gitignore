@@ -38,3 +38,10 @@ gwt-unitCache/
 
 *.cache.*
 space-dragon-html/war/WEB-INF/
+
+/space-dragon-html/war/com.chris.spacedragon.GwtDefinition/com.chris.spacedragon.GwtDefinition.nocache.js
+/space-dragon-html/war/com.chris.spacedragon.GwtDefinition/hosted.html
+/space-dragon-html/war/com.chris.spacedragon.GwtDefinition/soundmanager2-jsmin.js
+/space-dragon-html/war/com.chris.spacedragon.GwtDefinition/soundmanager2-setup.js
+/space-dragon-html/war/com.chris.spacedragon.GwtDefinition/soundmanager2_debug.swf
+/space-dragon-html/war/com.chris.spacedragon.GwtDefinition/soundmanager2_flash9_debug.swf

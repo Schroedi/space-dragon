@@ -27,10 +27,10 @@ public class ChaseCam extends PerspectiveCamera {
 		lookAt(lookAtPosition.x, lookAtPosition.y, lookAtPosition.z);
 		
 		dest.sub(position);
-		dest.mul(dt * 0.3f);
+		dest.mul(dt * 0.5f);
 		position.add(dest);
 		
-		orientation.slerp(lookAtOrientation, dt * 0.3f);
+		orientation.slerp(lookAtOrientation, dt * 0.5f);
 		orientationConj.set(orientation);
 		orientationConj.conjugate();
 		
@@ -51,7 +51,9 @@ public class ChaseCam extends PerspectiveCamera {
 		float aspect = viewportWidth / viewportHeight;
 		projection.setToProjection(Math.abs(near), Math.abs(far), fieldOfView, aspect);
 		view.idt();
-		view.scale(20, 20, 20);
+		view.scale(200, 200, 200);
+		//view.translate(position);
+
 		view.rotate(orientationConj);
 		skyBoxMatrix.set(projection);
 		Matrix4.mul(skyBoxMatrix.val, view.val);
@@ -62,11 +64,14 @@ public class ChaseCam extends PerspectiveCamera {
 		super(75f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		lookAtPosition = destPos;
 		lookAtOrientation = destOrient;
-
-		position.set(0, 1.5f, 1);
+		
+		position.set(30, 1.5f, 0);
 		lookAt(0, 0, 0);
 		up.set(0, 1, 0);
 		update();
+		
+		far = 1000;
+		near = 0.1f;
 
 	}
 
