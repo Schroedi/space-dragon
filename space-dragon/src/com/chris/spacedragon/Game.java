@@ -102,7 +102,7 @@ public class Game implements ApplicationListener {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
 		Gdx.gl.glEnable(GL10.GL_DEPTH_TEST);
 
-		camera.update(0.1f);
+		
 		sky.render(camera);
 
 		Terrain.render(camera);
@@ -128,12 +128,14 @@ public class Game implements ApplicationListener {
 				lastUpdate += 16;
 				dt -= 16;
 				
+				camera.update(0.1f);
 				// update your objects here using a constant dt of 16ms
 				Circle.updateAll(dragon);
-				dragon.update(16);				
+				dragon.update(16);	
 			}
 			
 		} else {
+			camera.update(0.1f);
 			lastUpdate = System.currentTimeMillis();
 		}
 	}
